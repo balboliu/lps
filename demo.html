@@ -1,0 +1,403 @@
+﻿<html>
+<head>
+<style>
+  body {
+    margin: 0px;
+    padding: 0px;
+  }
+
+</style>
+</head>
+
+<body style="height:100%;">
+
+    <div style="width:900px;height:400px; border:1px solid green;">
+    <div id="con" style="width:100%;height:100%;"> </div>
+    </div>
+    <button id="getSelectedPrim" type="button">getSelectedPrim</button>
+    <button id="loadJson" type="button">loadJson</button>
+    <button id="getJson" type="button">getJson</button>
+    <button id="clear" type="button">clear</button>
+    <input type="text" id="txt" />
+    <button id="getAllByType" type="button">getAllByType</button>
+    <button id="deleteFunc" type="button">deleteFunc</button>
+    <button id="getEndsPrims" type="button">getEndsPrims</button>
+    <button id="editFunc" type="button">editFunc</button>
+    <button id="attr" type="button">attr</button>
+    <button id="getInLines" type="button">getInLines</button>
+    <button id="getOutLines" type="button">getOutLines</button>
+    <button id="getAssociatedLines" type="button">getAssociatedLines</button>
+    <button id="getInPrims" type="button">getInPrims</button>
+    <button id="getOutPrims" type="button">getOutPrims</button>
+    <button id="getAssociatedPrims" type="button">getAssociatedPrims</button>
+    <button id="solid" type="button">solid</button>
+    <button id="dot" type="button">dot</button>
+    <button id="drawStripe" type="button">drawStripe</button>
+    <button id="drawCircle" type="button">drawCircle</button>
+    <button id="drawTextRect" type="button">drawTextRect</button>
+    <button id="setStyle" type="button">setStyle</button>
+    
+    
+    
+<div id='tojsontest'>
+</div>
+</body>
+<script src="jquery-1.7.1.min.js"></script>
+<script src="kinetic-v3.10.3.js"></script>
+<script src="util.js"></script>
+<script src="circle.js"></script>
+<script src="rect.js"></script>
+<script src="stripe.js"></script>
+<script src="curve.js"></script>
+<script src="lps.js"></script>
+<script>
+if(1){
+    (function(){
+        window.onload = function() {
+
+            var lps = new LPS('con',{
+              
+                onRightClick: function( prim ) {
+                    if(window.console)console.log(prim, 'rightclick');
+                },
+                onDbClick: function( prim ) {
+                    if(window.console)console.log(prim,'dbl');
+                },
+                onDraw: function( arg ) {
+                    console.log(arg.src,  'ondraw');
+                },
+                onMouseover:function(prim){
+                    //if(window.console)console.log(prim,'over');
+                },
+                onMouseout:function(prim){
+                    //if(window.console)console.log(prim,'out');
+                },
+                onDragEnd: function(arg){
+                    console.log(arg.src, 'dragend');
+                    return true;
+                }
+            }); 
+
+            var prim,json,
+                type = gVar.type;
+            jQuery('#getSelectedPrim').click(function(){
+                prim = lps.getSelectedPrim();
+                console.log(prim);
+            });
+            jQuery('#loadJson').click(function(){
+                lps.loadJson(json);
+            }); 
+            jQuery('#getJson').click(function(){
+                json = lps.getJson();
+                console.log(json);
+            });        
+            jQuery('#clear').click(function(){
+                lps.clear();
+            });
+            jQuery('#getAllByType').click(function(){
+                console.log(jQuery('#txt').attr('value'), lps.getAllByType(jQuery('#txt').attr('value')));
+            });  
+            jQuery('#deleteFunc').click(function(){
+                if(prim && prim.deleteFunc )prim.deleteFunc();
+            });  
+            jQuery('#getEndsPrims').click(function(){
+                if(prim && prim.getEndsPrims)console.log(prim.getEndsPrims());
+            });   
+            jQuery('#editFunc').click(function(){
+                if(prim && prim.editFunc){
+                    var txt = jQuery('#txt').attr('value');
+
+                    if(prim.type == 2){
+                        prim.editFunc({
+                            text: txt
+                        });
+                    }else{
+                         prim.editFunc({
+                            text: {
+                                text: txt
+                            },
+                            ltText: {
+                                text: 'l' + txt
+                            },
+                            rtText: {
+                                text: 'r' + txt
+                            }
+                         });
+                    }
+                }
+            });  
+            jQuery('#attr').click(function(){
+                if(prim ){
+                    var tmp,
+                        txt = jQuery('#txt').attr('value');
+                    if(txt.indexOf(',')>0){
+                        tmp = txt.split(',');
+
+                        prim.attr(tmp[0], tmp[1]);
+                        console.log(prim.properties);
+                    }
+                }
+            });                
+            jQuery('#getInLines').click(function(){
+                if(prim && prim.getInLines){
+                    console.log(prim.getInLines());
+                }
+            });  
+            jQuery('#getOutLines').click(function(){
+                if(prim && prim.getOutLines)console.log(prim.getOutLines());
+            });
+            jQuery('#getAssociatedLines').click(function(){
+                if(prim && prim.getAssociatedLines)console.log(prim.getAssociatedLines());
+            });
+            jQuery('#getInPrims').click(function(){
+                if(prim && prim.getInPrims)console.log(prim.getInPrims());
+            });
+            jQuery('#getOutPrims').click(function(){
+                if(prim && prim.getOutPrims)console.log(prim.getOutPrims());
+            });
+            jQuery('#getAssociatedPrims').click(function(){
+                if(prim && prim.getAssociatedPrims)console.log(prim.getAssociatedPrims());
+            });
+            jQuery('#solid').click(function(){
+                lps.toDrawCurve({
+                    type: 'solid', //'dot'
+                    curveStroke: 'black',
+                    draggable: true,
+                    
+                    dashArray: [1, 10, 0, 1],
+                    dashStroke: 'black',
+                    dashStrokeWidth: 1,
+                    
+                    text: '',
+                    textWidth : 50,
+                    textHeight: 15,
+                    textAlign: 'left',
+                    textPadding: 0,
+                    textFontSize: 12,
+                    textFontFamily: "Calibri",
+                    textFill: 'green',
+                    
+                    arrowSizeX: 12,
+                    arrowSizeY: 10,
+                    arrowFill: 'black',
+                    arrowStroke: 'black',
+                    
+                    anchorRadius: 3, 
+                    anchorStroke: 'green',
+                    anchorDetachFill: 'yellow',
+                    anchorAttachFill: 'red',
+                    anchorStrokeWidth: 1
+                });
+            });
+            jQuery('#dot').click(function(){
+                lps.toDrawCurve({
+                    type: 'dot', //'dot'
+                    curveStroke: 'black',
+                    draggable: true,
+                    
+                    dashArray: [1, 10, 0, 1],
+                    dashStroke: 'black',
+                    dashStrokeWidth: 1,
+                    
+                    text: '',
+                    textWidth : 50,
+                    textHeight: 15,
+                    textAlign: 'left',
+                    textPadding: 0,
+                    textFontSize: 12,
+                    textFontFamily: "Calibri",
+                    textFill: 'green',
+                    
+                    arrowSizeX: 12,
+                    arrowSizeY: 10,
+                    arrowFill: 'black',
+                    arrowStroke: 'black',
+                    
+                    anchorRadius: 3, 
+                    anchorStroke: 'green',
+                    anchorDetachFill: 'yellow',
+                    anchorAttachFill: 'red',
+                    anchorStrokeWidth: 1
+                });
+            });
+            jQuery('#drawStripe').click(function(){
+                lps.toDrawStripe({
+                    width: 30,
+                    height: 200,
+                    fill: 'black',
+                    blurStroke: 'black',
+                    focusStroke: 'blue',
+                    strokeWidth: 1,
+                    minHeight: 400,
+                    draggable: true,
+                    apNum: 5,
+                    anchorRadius: 3,
+                    anchorStroke: 'green',
+                    anchorFill: 'yellow',
+                    anchorStrokeWidth: 1  
+                });
+            });
+            jQuery('#drawCircle').click(function(){
+                lps.toDrawCircle({
+                    radius: 20,
+                    fill: 'black',
+                    blurStroke: 'black',
+                    focusStroke: 'blue',
+                    strokeWidth: 1,
+                    draggable: true
+                });
+            });
+            jQuery('#drawTextRect').click(function(){
+                lps.toDrawRect({
+                    text: '11',
+                    width: 100,
+                    height: 70,
+                    align: 'center',
+                    fontSize: 14,
+                    fontFamily: "Calibri",
+                    fill: 'white',
+                    padding : 10,
+                    blurStroke: 'black',
+                    focusStroke: 'blue',
+                    strokeWidth: 1,
+                    textFill: 'green',
+                    draggable: true,
+                    
+                    ltHeight: 15, 
+                    ltText: '22', 
+                    ltWidth : 20,
+                    ltAlign: 'left',
+                    ltFontSize: 12,
+                    ltFontFamily: "Calibri",
+                    ltFill: 'white',
+                    ltPadding : 0,
+                    ltStroke: 'white',
+                    ltTextFill: 'green',
+                    ltStrokeWidth: 1,
+
+                    rtText: '33', 
+                    rtHeight: 15, 
+                    rtWidth : 20,
+                    rtAlign: 'right',
+                    rtFontSize: 12,
+                    rtFontFamily: "Calibri",
+                    rtFill: 'white',
+                    rtPadding: 0,
+                    rtStroke: 'white',
+                    rtStrokeWidth: 1,
+                    rtTextFill: 'green'
+                });
+            });
+            jQuery('#setStyle').click(function(){
+                var config
+                if(prim && prim.setStyle){
+                    switch(prim.type){
+                        case 2: //line
+                            config = {
+                                curve: {
+                                    type: 'dot', //'dot'
+                                    stroke: 'blue',
+                                    strokeWidth: 1
+                                },
+                                dash: {
+                                    dashArray: [1, 10, 0, 1],
+                                    stroke: 'red',
+                                    strokeWidth: 1
+                                },
+                                text: {
+                                    align: 'left',
+                                    padding: 0,
+                                    fontSize: 12,
+                                    fontFamily: "Calibri",
+                                    fill: 'blue',
+                                    textFill: 'yellow'
+                                },
+                                arrow: {
+                                    sizeX: 14,
+                                    sizeY: 8,
+                                    fill: 'white',
+                                    stroke: 'green',
+                                    strokeWidth: 1
+                                },
+                                anchor: {
+                                    stroke: 'red',
+                                    fill: 'blue',
+                                    strokeWidth: 1
+                                }
+                            }
+                            break;
+                        case 3:
+                            config = {
+                                circle: {
+                                    fill: 'green',
+                                    stroke: 'yellow',
+                                    strokeWidth: 1
+                                }
+                            }
+                            break;
+                        case 4:
+                            config = {
+                                stripe: {
+                                    fill: 'red',
+                                    stroke: 'yellow',
+                                    strokeWidth: 1
+                                },
+                                topAnchor: {
+                                    stroke: 'red',
+                                    fill: 'blue',
+                                    strokeWidth: 1
+                                },
+                                bottomAnchor: {
+                                    stroke: 'red',
+                                    fill: 'blue',
+                                    strokeWidth: 1
+                                }
+                            }
+                            break;
+                        case 5:
+                            config = {
+                                rect: {
+                                    align: 'left',
+                                    fontSize: 18,
+                                    fontFamily: "Calibri",
+                                    fill: 'green',
+                                    padding : 10,
+                                    stroke: 'black',
+                                    strokeWidth: 1,
+                                    textFill: 'white'
+                                },
+                                ltText: {
+                                    align: 'left',
+                                    fontSize: 12,
+                                    fontFamily: "Calibri",
+                                    fill: 'white',
+                                    padding : 0,
+                                    stroke: 'white',
+                                    textFill: 'yellow',
+                                    strokeWidth: 1
+                                },
+                                rtText: {
+                                    align: 'right',
+                                    fontSize: 12,
+                                    fontFamily: "Calibri",
+                                    fill: 'white',
+                                    padding : 0,
+                                    stroke: 'white',
+                                    textFill: 'yellow',
+                                    strokeWidth: 1
+                                }
+                            }
+                            break;
+                    }
+                    prim.setStyle(config);
+                }
+            });
+   
+        };  
+    })();  
+}
+</script>
+
+
+</html>
+

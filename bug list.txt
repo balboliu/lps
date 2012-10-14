@@ -1,0 +1,6 @@
+text 透明
+stripe minHeight 400 收缩
+
+v0.1.1
+bugfix
+ltText rtText curveText 持久化
